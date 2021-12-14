@@ -3,7 +3,7 @@ import os
 import time
 import argparse
 from progress import Progress
-
+import networkx
 
 def load_graph(args):
     """Load graph from text file
@@ -14,12 +14,23 @@ def load_graph(args):
     Returns:
     A dict mapling a URL (str) to a list of target URLs (str).
     """
+    MyDictionary = {}
+    with open('school_web.txt', 'r') as args.datafile: #Opening the file
     # Iterate through the file line by line
-    for line in args.datafile:
-        # And split each line into two URLs
-        node, target = line.split()
-        raise RuntimeError("This function is not implemented yet.")
+        for line in args.datafile:
+            # And split each line into two URLs
+            node, target = line.split()
+            #Chech if the node(=key) is already in MyDictionary
+            if node in MyDictionary.keys():
+                MyDictionary[node].append(target)
+            #If it's not just add the key and the value normally
+            else:
+                MyDictionary[node] = []
+                MyDictionary[node].append(target)
 
+        # Testing if the dictionary is correct
+        # print(MyDictionary)
+    return MyDictionary
 
 def print_stats(graph):
         """Print number of nodes and edges in the given graph"""
