@@ -33,8 +33,13 @@ def load_graph(args):
     return MyDictionary
 
 def print_stats(graph):
-        """Print number of nodes and edges in the given graph"""
-        raise RuntimeError("This function is not implemented yet.")
+    """Print number of nodes and edges in the given graph"""
+    print("The number of nodes in the graph is:", len(graph.keys()))
+    count = 0
+    for key, value in graph.items():
+        if isinstance(value, list):
+            count += len(value)
+    print("The number of edges in the graph is:", count)
 
 
 def stochastic_page_rank(graph, args):
