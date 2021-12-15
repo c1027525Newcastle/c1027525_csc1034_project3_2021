@@ -3,7 +3,6 @@ import os
 import time
 import argparse
 from progress import Progress
-import networkx
 
 def load_graph(args):
     """Load graph from text file
@@ -20,9 +19,11 @@ def load_graph(args):
         for line in args.datafile:
             # And split each line into two URLs
             node, target = line.split()
+
             #Chech if the node(=key) is already in MyDictionary
             if node in MyDictionary.keys():
                 MyDictionary[node].append(target)
+
             #If it's not just add the key and the value normally
             else:
                 MyDictionary[node] = []
@@ -34,9 +35,19 @@ def load_graph(args):
 
 def print_stats(graph):
     """Print number of nodes and edges in the given graph"""
+
+    # To find the number of nodes is easy as we can look for the number of keys in the dictionary
     print("The number of nodes in the graph is:", len(graph.keys()))
+
+    """
+    To find the number of edges is harder as we can't just look directly
+    for the number of values in the dictionary as most of the values for each
+    key are in a list.
+    """
     count = 0
     for key, value in graph.items():
+
+        # Check if the value of the key is a list. If yes just add the length of it to the count
         if isinstance(value, list):
             count += len(value)
     print("The number of edges in the graph is:", count)
