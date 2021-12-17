@@ -3,6 +3,8 @@ import os
 import time
 import argparse
 from progress import Progress
+import random
+
 
 def load_graph(args):
     """Load graph from text file
@@ -67,7 +69,24 @@ def stochastic_page_rank(graph, args):
     a random walk that starts on a random node will after n_steps end
     on each node of the given graph.
     """
-    raise RuntimeError("This function is not implemented yet.")
+    hit_count = []
+    num_keys = len(graph.keys())
+
+    for i in range(num_keys):
+        hit_count.append(0)
+
+    #Make a list with all the nodes so we can get the position of each node easier
+    node_list = []
+    for i in graph.keys():
+        node_list.append(i)
+
+    for i in range(args.repeats):
+        random_node = random.randint(0, num_keys)
+        current_node = node_list[random_node-1]
+
+        #for i in range(args.steps):
+
+            #currrent_node =
 
 
 def distribution_page_rank(graph, args):
@@ -83,7 +102,7 @@ def distribution_page_rank(graph, args):
     This function estimates the Page Rank by iteratively calculating
     the probability that a random walker is currently on any node.
     """
-    raise RuntimeError("This function is not implemented yet.")
+    raise RuntimeError("4. This function is not implemented yet.")
 
 
 parser = argparse.ArgumentParser(description="Estimates page ranks from link information")
