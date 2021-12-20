@@ -72,21 +72,38 @@ def stochastic_page_rank(graph, args):
     hit_count = []
     num_keys = len(graph.keys())
 
+    # Populate the hit_count list with 0 for each node
     for i in range(num_keys):
         hit_count.append(0)
 
-    #Make a list with all the nodes so we can get the position of each node easier
+    # Make a list with all the nodes so we can get the position of each node easier
     node_list = []
     for i in graph.keys():
         node_list.append(i)
 
-    for i in range(args.repeats):
+    # Test if the node list contains the correct values or all values
+    # print(len(node_list))
+    # print(node_list)
+
+    for _ in range(args.repeats): # args.repeats
         random_node = random.randint(0, num_keys)
-        current_node = node_list[random_node-1]
+        current_node = node_list[random_node -1]
 
-        #for i in range(args.steps):
+        for _ in range(args.steps): # args.steps
 
-            #currrent_node =
+            # Get the edges of the node from the graph dictionary
+            list_of_values = graph[current_node]
+            random_edge = random.randint(0, len(list_of_values))
+
+            # Update the current_node
+            current_node = list_of_values[random_edge -1]
+
+        # Update the hit_count list
+        index_node = node_list.index(current_node)
+
+        #print(index_node)
+        hit_count[index_node] += 1/args.repeats
+
 
 
 def distribution_page_rank(graph, args):
@@ -110,8 +127,8 @@ parser.add_argument('datafile', nargs='?', type=argparse.FileType('r'), default=
                     help="Textfile of links among web pages as URL tuples")
 parser.add_argument('-m', '--method', choices=('stochastic', 'distribution'), default='stochastic',
                     help="selected page rank algorithm")
-parser.add_argument('-r', '--repeats', type=int, default=1_000_000, help="number of repetitions")
-parser.add_argument('-s', '--steps', type=int, default=100, help="number of steps a walker takes")
+parser.add_argument('-r', '--repeats', type=int, default=1000, help="number of repetitions")
+parser.add_argument('-s', '--steps', type=int, default=50, help="number of steps a walker takes")
 parser.add_argument('-n', '--number', type=int, default=20, help="number of results shown")
 
 
