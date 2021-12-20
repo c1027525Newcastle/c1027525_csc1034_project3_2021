@@ -104,6 +104,13 @@ def stochastic_page_rank(graph, args):
         #print(index_node)
         hit_count[index_node] += 1/args.repeats
 
+    hit_frequency = {}
+    for key in node_list:
+        for value in hit_count:
+            hit_frequency[key] = value
+            hit_count.remove(value)
+            break
+    return hit_frequency
 
 
 def distribution_page_rank(graph, args):
@@ -127,8 +134,8 @@ parser.add_argument('datafile', nargs='?', type=argparse.FileType('r'), default=
                     help="Textfile of links among web pages as URL tuples")
 parser.add_argument('-m', '--method', choices=('stochastic', 'distribution'), default='stochastic',
                     help="selected page rank algorithm")
-parser.add_argument('-r', '--repeats', type=int, default=1000, help="number of repetitions")
-parser.add_argument('-s', '--steps', type=int, default=50, help="number of steps a walker takes")
+parser.add_argument('-r', '--repeats', type=int, default=100_000, help="number of repetitions")
+parser.add_argument('-s', '--steps', type=int, default=75, help="number of steps a walker takes")
 parser.add_argument('-n', '--number', type=int, default=20, help="number of results shown")
 
 
