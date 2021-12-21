@@ -7,26 +7,20 @@ import random
 
 
 def load_graph(args):
-    """Load graph from text file
-
-    Parameters:
-    args -- arguments named tuple
-
-    Returns:
-    A dict mapling a URL (str) to a list of target URLs (str).
-    """
     MyDictionary = {}
-    with open('school_web.txt', 'r') as args.datafile: #Opening the file
-    # Iterate through the file line by line
+
+    # Opening the file
+    with open('school_web.txt', 'r') as args.datafile:
+        # Iterate through the file line by line
         for line in args.datafile:
             # And split each line into two URLs
             node, target = line.split()
 
-            #Chech if the node(=key) is already in MyDictionary
+            # Chech if the node(=key) is already in MyDictionary
             if node in MyDictionary.keys():
                 MyDictionary[node].append(target)
 
-            #If it's not just add the key and the value normally
+            # If it's not just add the key and the value normally
             else:
                 MyDictionary[node] = []
                 MyDictionary[node].append(target)
@@ -36,8 +30,6 @@ def load_graph(args):
     return MyDictionary
 
 def print_stats(graph):
-    """Print number of nodes and edges in the given graph"""
-
     # To find the number of nodes is easy as we can look for the number of keys in the dictionary
     print("The number of nodes in the graph is:", len(graph.keys()))
 
@@ -56,19 +48,6 @@ def print_stats(graph):
 
 
 def stochastic_page_rank(graph, args):
-    """Stochastic PageRank estimation
-
-    Parameters:
-    graph -- a graph object as returned by load_graph()
-    args -- arguments named tuple
-
-    Returns:
-    A dict that assigns each page its hit frequency
-
-    This function estimates the Page Rank by counting how frequently
-    a random walk that starts on a random node will after n_steps end
-    on each node of the given graph.
-    """
     hit_count = []
     num_keys = len(graph.keys())
 
@@ -100,33 +79,24 @@ def stochastic_page_rank(graph, args):
 
         # Update the hit_count list
         index_node = node_list.index(current_node)
-
-        #print(index_node)
         hit_count[index_node] += 1/args.repeats
 
+    # Creating the dictionary that contains the link and hit count
     hit_frequency = {}
+
+    # Using 2 for loops in order to add the keys and values correctly to the dictionary
     for key in node_list:
+        # This for loop only loops once for each iteration of the first loop as it has a break
         for value in hit_count:
             hit_frequency[key] = value
+            # Due to the break we will just remove the first hit_count
+            # from the list to use the good one for the next iteration
             hit_count.remove(value)
             break
     return hit_frequency
 
 
 def distribution_page_rank(graph, args):
-    """Probabilistic PageRank estimation
-
-    Parameters:
-    graph -- a graph object as returned by load_graph()
-    args -- arguments named tuple
-
-    Returns:
-    A dict that assigns each page its probability to be reached
-
-    This function estimates the Page Rank by iteratively calculating
-    the probability that a random walker is currently on any node.
-    """
-
     node_prob = []
     num_nodes = len(graph.keys())
     uniform_prob = 1/ num_nodes
@@ -139,26 +109,30 @@ def distribution_page_rank(graph, args):
         node_list.append(i)
 
     for _ in range(args.steps):
-
         # Initialize next_prob[node] = 0 for all nodes
         next_prob = []
         for _ in range(num_nodes):
             next_prob.append(0)
 
         for node in range(num_nodes):
+            # Use a current_node to better find the edges of each node
             current_node = node_list[node]
             edges = graph[current_node]
             out_degree = len(edges)
             p = node_prob[node]/ out_degree
 
             for target in range(out_degree):
+                # Look for the index of each edge in the node_list to accurately assign each prob
                 index_node = node_list.index(edges[target])
                 next_prob[index_node] += p
 
+        # Update the node_prob with the new prob from next_prob
         for indx in range(num_nodes):
+            # Checks only for the prob that have changed in the next_prob
             if next_prob[indx] != 0:
                 node_prob[indx] = next_prob[indx]
 
+    # Creating the dictionary that contains the link and probability
     page_prob = {}
     for key in node_list:
         for value in node_prob:
