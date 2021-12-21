@@ -85,11 +85,11 @@ def stochastic_page_rank(graph, args):
     # print(len(node_list))
     # print(node_list)
 
-    for _ in range(args.repeats): # args.repeats
+    for _ in range(args.repeats):
         random_node = random.randint(0, num_keys)
         current_node = node_list[random_node -1]
 
-        for _ in range(args.steps): # args.steps
+        for _ in range(args.steps):
 
             # Get the edges of the node from the graph dictionary
             list_of_values = graph[current_node]
@@ -126,7 +126,46 @@ def distribution_page_rank(graph, args):
     This function estimates the Page Rank by iteratively calculating
     the probability that a random walker is currently on any node.
     """
-    raise RuntimeError("4. This function is not implemented yet.")
+
+    node_prob = []
+    num_nodes = len(graph.keys())
+    uniform_prob = 1/ num_nodes
+    for _ in range(num_nodes):
+        node_prob.append(uniform_prob)
+
+    # Make a list with all the nodes so we can get the position of each node easier
+    node_list = []
+    for i in graph.keys():
+        node_list.append(i)
+
+    for _ in range(args.steps):
+
+        # Initialize next_prob[node] = 0 for all nodes
+        next_prob = []
+        for _ in range(num_nodes):
+            next_prob.append(0)
+
+        for node in range(num_nodes):
+            current_node = node_list[node]
+            edges = graph[current_node]
+            out_degree = len(edges)
+            p = node_prob[node]/ out_degree
+
+            for target in range(out_degree):
+                index_node = node_list.index(edges[target])
+                next_prob[index_node] += p
+
+        for indx in range(num_nodes):
+            if next_prob[indx] != 0:
+                node_prob[indx] = next_prob[indx]
+
+    page_prob = {}
+    for key in node_list:
+        for value in node_prob:
+            page_prob[key] = value
+            node_prob.remove(value)
+            break
+    return page_prob
 
 
 parser = argparse.ArgumentParser(description="Estimates page ranks from link information")
@@ -134,8 +173,8 @@ parser.add_argument('datafile', nargs='?', type=argparse.FileType('r'), default=
                     help="Textfile of links among web pages as URL tuples")
 parser.add_argument('-m', '--method', choices=('stochastic', 'distribution'), default='stochastic',
                     help="selected page rank algorithm")
-parser.add_argument('-r', '--repeats', type=int, default=100_000, help="number of repetitions")
-parser.add_argument('-s', '--steps', type=int, default=75, help="number of steps a walker takes")
+parser.add_argument('-r', '--repeats', type=int, default=10_000, help="number of repetitions")
+parser.add_argument('-s', '--steps', type=int, default=100, help="number of steps a walker takes")
 parser.add_argument('-n', '--number', type=int, default=20, help="number of results shown")
 
 
