@@ -13,6 +13,7 @@ def load_graph(args):
     with open('school_web.txt', 'r') as args.datafile:
         # Iterate through the file line by line
         for line in args.datafile:
+
             # And split each line into two URLs
             node, target = line.split()
 
@@ -30,6 +31,7 @@ def load_graph(args):
     return MyDictionary
 
 def print_stats(graph):
+
     # To find the number of nodes is easy as we can look for the number of keys in the dictionary
     print("The number of nodes in the graph is:", len(graph.keys()))
 
@@ -86,13 +88,17 @@ def stochastic_page_rank(graph, args):
 
     # Using 2 for loops in order to add the keys and values correctly to the dictionary
     for key in node_list:
+
         # This for loop only loops once for each iteration of the first loop as it has a break
         for value in hit_count:
             hit_frequency[key] = value
+
             # Due to the break we will just remove the first hit_count
             # from the list to use the good one for the next iteration
             hit_count.remove(value)
             break
+
+    # The better way of writing the dictionary: hit_frequency = {node_list[i]: hit_count[i] for i in range(len(node_list))}
     return hit_frequency
 
 
@@ -109,12 +115,14 @@ def distribution_page_rank(graph, args):
         node_list.append(i)
 
     for _ in range(args.steps):
+
         # Initialize next_prob[node] = 0 for all nodes
         next_prob = []
         for _ in range(num_nodes):
             next_prob.append(0)
 
         for node in range(num_nodes):
+
             # Use a current_node to better find the edges of each node
             current_node = node_list[node]
             edges = graph[current_node]
@@ -128,6 +136,7 @@ def distribution_page_rank(graph, args):
 
         # Update the node_prob with the new prob from next_prob
         for indx in range(num_nodes):
+
             # Checks only for the prob that have changed in the next_prob
             if next_prob[indx] != 0:
                 node_prob[indx] = next_prob[indx]
@@ -147,7 +156,7 @@ parser.add_argument('datafile', nargs='?', type=argparse.FileType('r'), default=
                     help="Textfile of links among web pages as URL tuples")
 parser.add_argument('-m', '--method', choices=('stochastic', 'distribution'), default='stochastic',
                     help="selected page rank algorithm")
-parser.add_argument('-r', '--repeats', type=int, default=10_000, help="number of repetitions")
+parser.add_argument('-r', '--repeats', type=int, default=100_000, help="number of repetitions")
 parser.add_argument('-s', '--steps', type=int, default=100, help="number of steps a walker takes")
 parser.add_argument('-n', '--number', type=int, default=20, help="number of results shown")
 
